@@ -34,6 +34,7 @@ export async function streamChat(profileId, message, { onChunk, onDone, onError 
   const reader = res.body.getReader()
   const decoder = new TextDecoder()
   let buffer = ''
+  let doneReceived = false
 
   try {
     while (true) {
@@ -50,6 +51,7 @@ export async function streamChat(profileId, message, { onChunk, onDone, onError 
         if (!payload) continue
 
         if (payload.startsWith('[DONE]')) {
+          doneReceived = true
           try {
             const meta = JSON.parse(payload.slice(7))
             onDone(meta.data ?? null)
@@ -61,6 +63,8 @@ export async function streamChat(profileId, message, { onChunk, onDone, onError 
         }
       }
     }
+
+    if (!doneReceived) onDone(null)
   } catch (err) {
     if (err.name !== 'AbortError') {
       onError('Conexão interrompida.')

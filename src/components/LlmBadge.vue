@@ -8,5 +8,5 @@
 </template>
 
 <script setup>
-defineProps({ llmUsed: { type: String, default: null } })
+defineProps({ llmUsed: { default: null } })
 </script>
