@@ -1,40 +1,42 @@
 <template>
-  <div class="min-h-screen relative z-10 flex flex-col items-center px-4">
+  <div class="min-h-screen flex flex-col items-center px-4">
 
     <!-- Hero -->
     <header class="w-full max-w-5xl text-center pt-16 pb-10 sm:pt-24 sm:pb-14">
       <h1
         class="text-gradient mb-4 tracking-tight leading-none"
-        style="font-family:'Playfair Display',serif; font-size:clamp(3.5rem,10vw,6rem);"
+        style="font-family:'Playfair Display',serif; font-size:clamp(3rem,9vw,5.5rem);"
       >
         AjuriIA
       </h1>
-      <p
-        class="text-base sm:text-lg max-w-sm mx-auto leading-relaxed"
-        style="color:rgba(244,233,216,0.65);"
-      >
+      <p class="text-base sm:text-lg max-w-md mx-auto leading-relaxed" style="color:var(--color-ink);">
         Inteligência artificial para a realidade amazônica.
       </p>
-      <p
-        class="text-sm mt-1"
-        style="color:rgba(244,233,216,0.4);"
-      >
+      <p class="text-sm mt-1" style="color:var(--color-ink-soft);">
         Escolha seu perfil para começar.
       </p>
-
-      <div class="mt-8 mx-auto max-w-xs" style="height:1px; background:linear-gradient(90deg,transparent,rgba(224,123,57,0.35),transparent);"></div>
     </header>
 
     <!-- Loading -->
-    <div v-if="loading" class="py-20" style="color:rgba(244,233,216,0.35);">
-      <div class="flex items-center gap-3 text-sm">
-        <span class="inline-block w-4 h-4 rounded-full border-2 border-guarana border-t-transparent animate-spin"></span>
-        Carregando perfis...
-      </div>
+    <div
+      v-if="loading"
+      role="status"
+      aria-live="polite"
+      class="flex items-center gap-3 py-20 text-sm"
+      style="color:var(--color-ink-soft);"
+    >
+      <span class="inline-block w-4 h-4 rounded-full border-2 animate-spin"
+            style="border-color:var(--color-floresta); border-top-color:transparent;"></span>
+      Carregando perfis...
     </div>
 
     <!-- Erro -->
-    <div v-else-if="error" class="py-20 text-sm" style="color:#fca5a5;">
+    <div
+      v-else-if="error"
+      role="alert"
+      class="py-20 text-sm font-medium"
+      style="color:#B91C1C;"
+    >
       {{ error }}
     </div>
 

@@ -1,9 +1,11 @@
 <template>
   <div
-    class="text-xs text-guarana mt-2 transition-opacity duration-500"
-    :class="llmUsed ? 'opacity-100' : 'opacity-0'"
+    v-if="llmUsed"
+    class="text-xs mt-2 flex items-center gap-1"
+    style="color:var(--color-ink-soft);"
   >
-    ✦ Respondido por {{ llmUsed ?? '' }}
+    <span aria-hidden="true" style="color:var(--color-guarana);">✦</span>
+    Respondido por {{ llmUsed }}
   </div>
 </template>
 

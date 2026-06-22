@@ -1,56 +1,49 @@
 <template>
-  <div
-    class="glass-card cursor-pointer select-none flex items-center gap-5 p-6 sm:p-8
-           transition-all duration-300 ease-out"
+  <button
+    type="button"
+    class="card text-left w-full cursor-pointer select-none flex items-center gap-4 p-5 sm:p-6"
     :style="{
-      animationName: 'fadeSlideUp',
-      animationDuration: '0.5s',
-      animationTimingFunction: 'ease-out',
-      animationFillMode: 'forwards',
-      animationDelay: `${index * 80}ms`,
-      opacity: 0,
-      transform: hovered ? 'translateY(-3px)' : 'translateY(0)',
-      borderColor: hovered ? 'rgba(224,123,57,0.55)' : 'rgba(224,123,57,0.2)',
-      boxShadow: hovered ? '0 8px 32px rgba(224,123,57,0.2), 0 0 0 1px rgba(224,123,57,0.1)' : 'none',
+      animation: `fadeSlideUp 0.5s ease-out ${index * 70}ms both`,
     }"
-    @mouseenter="hovered = true"
-    @mouseleave="hovered = false"
     @click="$emit('select', profile)"
   >
-    <div
-      class="w-14 h-14 rounded-full flex items-center justify-center text-2xl shrink-0 transition-all duration-300"
-      :style="{
-        background: 'rgba(45,106,79,0.45)',
-        boxShadow: hovered
-          ? '0 0 0 2px rgba(224,123,57,0.5), 0 4px 16px rgba(45,106,79,0.4)'
-          : '0 0 0 1px rgba(224,123,57,0.25)',
-      }"
+    <span
+      class="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
+      :style="{ background: tint.bg, boxShadow: `inset 0 0 0 1px ${tint.ring}` }"
+      role="img"
+      :aria-label="profile.nome"
     >
       {{ profile.icone }}
-    </div>
+    </span>
 
-    <div class="flex flex-col gap-1 min-w-0">
-      <h3
-        class="text-areia font-semibold text-base leading-tight truncate"
-        style="font-family:'Playfair Display',serif;"
+    <span class="flex flex-col gap-0.5 min-w-0">
+      <span
+        class="font-semibold text-base leading-tight truncate"
+        style="font-family:'Playfair Display',serif; color:var(--color-ink);"
       >
         {{ profile.nome }}
-      </h3>
-      <p class="text-sm leading-snug" style="color:rgba(244,233,216,0.6);">
+      </span>
+      <span class="text-sm leading-snug" style="color:var(--color-ink-soft);">
         {{ profile.descricao }}
-      </p>
-    </div>
-  </div>
+      </span>
+    </span>
+  </button>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed } from 'vue'
 
-defineProps({
+const props = defineProps({
   profile: { type: Object, required: true },
   index:   { type: Number, default: 0 }
 })
 defineEmits(['select'])
 
-const hovered = ref(false)
+// Ciclo de tints amazônicos por posição
+const TINTS = [
+  { bg: 'rgba(27,94,63,0.10)',  ring: 'rgba(27,94,63,0.22)'  }, // floresta
+  { bg: 'rgba(217,100,26,0.10)', ring: 'rgba(217,100,26,0.24)' }, // guaraná
+  { bg: 'rgba(33,136,166,0.10)', ring: 'rgba(33,136,166,0.24)' }, // rio
+]
+const tint = computed(() => TINTS[props.index % TINTS.length])
 </script>
