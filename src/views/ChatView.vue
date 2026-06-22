@@ -32,7 +32,7 @@
     <div class="flex-1 flex flex-col min-w-0">
 
       <!-- Header -->
-      <header class="shrink-0 h-14 flex items-center gap-2 px-4"
+      <header class="shrink-0 h-16 flex items-center gap-2 px-6 lg:px-8"
               style="background:var(--color-surface); border-bottom:1px solid var(--color-line);">
         <button type="button" class="hamburger md:hidden" aria-label="Abrir menu" @click="drawerOpen = true">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -40,8 +40,8 @@
         </button>
 
         <div v-if="profile" class="flex items-center gap-2 min-w-0">
-          <span class="text-lg leading-none md:hidden" role="img" :aria-label="profile.nome">{{ profile.icone }}</span>
-          <span class="font-semibold text-sm truncate" style="font-family:'Playfair Display',serif; color:var(--color-ink);">
+          <span class="text-xl leading-none md:hidden" role="img" :aria-label="profile.nome">{{ profile.icone }}</span>
+          <span class="font-semibold text-base truncate" style="font-family:'Playfair Display',serif; color:var(--color-ink);">
             {{ profile.nome }}
           </span>
         </div>
@@ -51,31 +51,30 @@
       </header>
 
       <!-- Mensagens -->
-      <main ref="messagesEl" class="flex-1 overflow-y-auto px-4 py-6">
-        <div class="max-w-[760px] mx-auto">
-
-          <!-- Empty state -->
-          <div v-if="!messages.length && profile"
-               class="flex flex-col items-center text-center pt-12 sm:pt-20 pb-10 gap-5">
-            <span class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl"
-                  style="background:var(--color-surface); box-shadow:var(--shadow-card); border:1px solid var(--color-line);"
-                  role="img" :aria-label="profile.nome">
-              {{ profile.icone }}
-            </span>
-            <div>
-              <h2 class="text-xl font-semibold mb-1" style="font-family:'Playfair Display',serif; color:var(--color-ink);">
-                {{ profile.nome }}
-              </h2>
-              <p class="text-sm" style="color:var(--color-ink-soft);">Como posso te ajudar hoje?</p>
-            </div>
-            <div class="flex flex-wrap justify-center gap-2 max-w-md">
-              <button v-for="chip in suggestions" :key="chip" type="button" class="chip" @click="useSuggestion(chip)">
-                {{ chip }}
-              </button>
-            </div>
+      <main ref="messagesEl" class="flex-1 overflow-y-auto px-6 lg:px-10 py-8 lg:py-10">
+        <!-- Empty state (centralizado verticalmente) -->
+        <div v-if="!messages.length && profile"
+             class="min-h-full flex flex-col items-center justify-center text-center gap-6 pb-10">
+          <span class="w-18 h-18 rounded-2xl flex items-center justify-center text-4xl"
+                style="width:4.5rem;height:4.5rem;background:var(--color-surface); box-shadow:var(--shadow-card); border:1px solid var(--color-line);"
+                role="img" :aria-label="profile.nome">
+            {{ profile.icone }}
+          </span>
+          <div>
+            <h2 class="text-2xl font-semibold mb-1.5" style="font-family:'Playfair Display',serif; color:var(--color-ink);">
+              {{ profile.nome }}
+            </h2>
+            <p class="text-sm" style="color:var(--color-ink-soft);">Como posso te ajudar hoje?</p>
           </div>
+          <div class="flex flex-wrap justify-center gap-2.5 max-w-lg">
+            <button v-for="chip in suggestions" :key="chip" type="button" class="chip" @click="useSuggestion(chip)">
+              {{ chip }}
+            </button>
+          </div>
+        </div>
 
-          <!-- Mensagens -->
+        <!-- Conversa -->
+        <div v-else class="max-w-[var(--reading)] mx-auto">
           <ChatBubble
             v-for="(msg, i) in messages"
             :key="i"
@@ -93,9 +92,9 @@
       </div>
 
       <!-- Composer -->
-      <footer class="shrink-0 px-4 pt-3"
-              style="background:var(--color-surface); box-shadow:var(--shadow-float); padding-bottom:max(0.75rem, env(safe-area-inset-bottom));">
-        <form class="max-w-[760px] mx-auto flex gap-2.5 items-end" @submit.prevent="handleSend">
+      <footer class="shrink-0 px-6 lg:px-10 pt-4"
+              style="background:var(--color-surface); box-shadow:var(--shadow-float); padding-bottom:max(1rem, env(safe-area-inset-bottom));">
+        <form class="max-w-[var(--reading)] mx-auto flex gap-3 items-end" @submit.prevent="handleSend">
           <label for="chat-input" class="sr-only">Mensagem</label>
           <input
             id="chat-input"
@@ -103,12 +102,12 @@
             v-model="inputText"
             :disabled="isStreaming"
             placeholder="Digite sua mensagem..."
-            class="composer-input flex-1 px-4 py-3 text-sm"
-            style="min-height:48px;"
+            class="composer-input flex-1 px-4 text-sm"
+            style="min-height:52px;"
             autocomplete="off"
           />
           <button type="submit" :disabled="isStreaming || !inputText.trim()"
-                  class="btn-primary px-5 py-3 text-sm shrink-0" style="min-height:48px;">
+                  class="btn-primary px-6 text-sm shrink-0" style="min-height:52px;">
             {{ isStreaming ? 'Enviando…' : 'Enviar' }}
           </button>
         </form>

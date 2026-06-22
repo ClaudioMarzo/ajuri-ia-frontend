@@ -1,7 +1,7 @@
 <template>
   <button
     type="button"
-    class="card text-left w-full cursor-pointer select-none flex items-center gap-4 p-5 sm:p-6"
+    class="card text-left w-full h-full cursor-pointer select-none flex items-start gap-4 p-6"
     :style="{
       animation: `fadeSlideUp 0.5s ease-out ${index * 70}ms both`,
     }"
@@ -16,9 +16,9 @@
       {{ profile.icone }}
     </span>
 
-    <span class="flex flex-col gap-0.5 min-w-0">
+    <span class="flex flex-col gap-1 min-w-0">
       <span
-        class="font-semibold text-base leading-tight truncate"
+        class="font-semibold text-base leading-tight"
         style="font-family:'Playfair Display',serif; color:var(--color-ink);"
       >
         {{ profile.nome }}
