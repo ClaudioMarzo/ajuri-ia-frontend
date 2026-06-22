@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Env de produção — configurar no Cloudflare Pages dashboard, não commitar
+.env.production
+.env.staging
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
