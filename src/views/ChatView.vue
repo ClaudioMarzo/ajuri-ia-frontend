@@ -1,28 +1,33 @@
 <template>
-  <div class="min-h-screen bg-verde-mata flex flex-col">
+  <div class="flex flex-col min-h-screen relative z-10">
 
-    <!-- Header -->
-    <header class="bg-verde-folha px-5 py-4 flex items-center gap-4 shrink-0 shadow-md">
-      <button
-        class="text-neblina hover:text-areia transition-colors text-sm"
-        @click="router.push('/')"
-      >
+    <!-- Header glassmorphism -->
+    <header class="shrink-0 px-4 py-3 flex items-center gap-3"
+            style="background:rgba(45,106,79,0.15); backdrop-filter:blur(12px); border-bottom:1px solid rgba(224,123,57,0.2);">
+      <button class="text-sm transition-colors"
+              style="color:rgba(248,244,239,0.6);"
+              @mouseover="$event.target.style.color='#F4E9D8'"
+              @mouseleave="$event.target.style.color='rgba(248,244,239,0.6)'"
+              @click="router.push('/')">
         ← Voltar
       </button>
-      <div v-if="profile" class="flex items-center gap-3">
-        <span class="text-2xl">{{ profile.icone }}</span>
-        <span class="text-areia font-semibold" style="font-family: 'Playfair Display', serif">
+      <div v-if="profile" class="flex items-center gap-2">
+        <span class="text-xl">{{ profile.icone }}</span>
+        <span class="text-areia font-semibold text-sm"
+              style="font-family:'Playfair Display',serif;">
           {{ profile.nome }}
         </span>
       </div>
     </header>
 
-    <!-- Área de mensagens -->
-    <main ref="messagesEl" class="flex-1 overflow-y-auto px-4 py-6 space-y-1">
-      <div v-if="!messages.length" class="text-center text-neblina text-sm mt-16 opacity-60">
+    <!-- Mensagens -->
+    <main ref="messagesEl"
+          class="flex-1 overflow-y-auto px-3 sm:px-6 py-6">
+      <div v-if="!messages.length"
+           class="text-center mt-20 text-sm"
+           style="color:rgba(248,244,239,0.35);">
         Faça sua primeira pergunta...
       </div>
-
       <ChatBubble
         v-for="(msg, i) in messages"
         :key="i"
@@ -33,32 +38,32 @@
     </main>
 
     <!-- Erro -->
-    <div v-if="error" class="px-4 py-2 bg-red-900/30 text-red-300 text-sm text-center">
+    <div v-if="error"
+         class="px-4 py-2 text-center text-sm"
+         style="background:rgba(220,38,38,0.15); border-top:1px solid rgba(220,38,38,0.3); color:#fca5a5;">
       {{ error }}
     </div>
 
-    <!-- Input -->
-    <footer class="px-4 py-4 bg-verde-folha shrink-0">
-      <form class="flex gap-3 max-w-3xl mx-auto" @submit.prevent="handleSend">
+    <!-- Input footer -->
+    <footer class="shrink-0 px-3 sm:px-6 py-3"
+            style="background:rgba(7,15,9,0.85); backdrop-filter:blur(12px); border-top:1px solid rgba(45,106,79,0.25);">
+      <form class="flex gap-2 max-w-3xl mx-auto" @submit.prevent="handleSend">
         <input
           v-model="inputText"
           :disabled="isStreaming"
           placeholder="Digite sua mensagem..."
-          class="
-            flex-1 bg-verde-mata text-areia placeholder-neblina/50
-            rounded-xl px-4 py-3 text-sm outline-none
-            border border-transparent focus:border-rio-azul
-            transition-colors disabled:opacity-50
-          "
+          class="flex-1 rounded-xl px-4 py-3 text-sm text-areia outline-none transition-all disabled:opacity-50"
+          style="background:rgba(45,106,79,0.12); border:1px solid rgba(45,106,79,0.3);"
+          @focus="$event.target.style.borderColor='rgba(224,123,57,0.6)'"
+          @blur="$event.target.style.borderColor='rgba(45,106,79,0.3)'"
         />
         <button
           type="submit"
           :disabled="isStreaming || !inputText.trim()"
-          class="
-            bg-guarana text-white rounded-xl px-5 py-3 text-sm font-semibold
-            hover:brightness-110 transition-all
-            disabled:opacity-40 disabled:cursor-not-allowed
-          "
+          class="rounded-xl px-5 py-3 text-sm font-semibold text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+          style="background:#E07B39; box-shadow:0 4px 15px rgba(224,123,57,0.3);"
+          @mouseover="onSendHover($event)"
+          @mouseleave="$event.target.style.filter='none'"
         >
           {{ isStreaming ? '...' : 'Enviar' }}
         </button>
@@ -76,10 +81,10 @@ import { fetchProfiles } from '../services/api.js'
 
 const props = defineProps({ profileId: { type: String, required: true } })
 
-const router      = useRouter()
-const profile     = ref(null)
-const inputText   = ref('')
-const messagesEl  = ref(null)
+const router     = useRouter()
+const profile    = ref(null)
+const inputText  = ref('')
+const messagesEl = ref(null)
 
 const { messages, isStreaming, error, sendMessage } = useChat()
 
@@ -96,11 +101,14 @@ async function handleSend() {
   await sendMessage(props.profileId, text)
 }
 
-// Scroll automático ao fim após cada mensagem
+function onSendHover(e) {
+  if (!isStreaming.value && inputText.value.trim())
+    e.target.style.filter = 'brightness(1.1)'
+}
+
 watch(messages, async () => {
   await nextTick()
-  if (messagesEl.value) {
+  if (messagesEl.value)
     messagesEl.value.scrollTop = messagesEl.value.scrollHeight
-  }
 }, { deep: true })
 </script>
