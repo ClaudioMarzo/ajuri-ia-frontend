@@ -1,23 +1,31 @@
 <template>
-  <div class="min-h-screen bg-verde-mata px-6 py-12">
-    <header class="text-center mb-14">
-      <h1 class="text-areia text-4xl mb-3" style="font-family: 'Playfair Display', serif">
+  <div class="min-h-screen relative z-10 py-10 px-4">
+
+    <!-- Hero -->
+    <header class="text-center mb-12">
+      <h1 class="text-5xl sm:text-6xl mb-4 tracking-tight"
+          style="font-family:'Playfair Display',serif; color:#F4E9D8; text-shadow: 0 0 40px rgba(224,123,57,0.3);">
         AjuriIA
       </h1>
-      <p class="text-neblina text-base max-w-md mx-auto">
+      <p class="text-sm sm:text-base max-w-xs sm:max-w-sm mx-auto leading-relaxed"
+         style="color: rgba(248,244,239,0.6);">
         Inteligência artificial para a realidade amazônica. Escolha seu perfil.
       </p>
     </header>
 
-    <div v-if="loading" class="text-center text-neblina text-sm">
-      Carregando perfis...
+    <!-- Loading -->
+    <div v-if="loading" class="text-center py-20" style="color:rgba(248,244,239,0.4);">
+      Carregando...
     </div>
 
-    <div v-else-if="error" class="text-center text-guarana text-sm">
+    <!-- Erro -->
+    <div v-else-if="error" class="text-center py-20 text-guarana text-sm">
       {{ error }}
     </div>
 
-    <div v-else class="grid grid-cols-2 gap-5 max-w-2xl mx-auto md:grid-cols-3">
+    <!-- Grid de perfis -->
+    <div v-else
+         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
       <ProfileCard
         v-for="(profile, i) in profiles"
         :key="profile.id"
@@ -26,6 +34,7 @@
         @select="goToChat"
       />
     </div>
+
   </div>
 </template>
 
