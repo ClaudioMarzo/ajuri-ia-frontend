@@ -2,8 +2,8 @@
   <!-- Mensagem do usuário: bolha verde à direita -->
   <div v-if="message.role === 'user'" class="flex justify-end mb-5">
     <div
-      class="max-w-[85%] sm:max-w-[78%] px-4 py-2.5 text-sm leading-relaxed text-white"
-      style="background:var(--color-floresta); border-radius:1.1rem 0.3rem 1.1rem 1.1rem;"
+      class="max-w-[85%] sm:max-w-[78%] px-4 py-2.5 text-sm leading-relaxed"
+      style="background:var(--color-bubble-user-bg); color:var(--color-bubble-user-text); border-radius:1.1rem 0.3rem 1.1rem 1.1rem;"
     >
       {{ message.content }}
     </div>

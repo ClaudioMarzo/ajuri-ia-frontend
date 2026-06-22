@@ -20,6 +20,10 @@
   --color-guarana:       #D9641A;
   --color-rio:           #2188A6;
 
+  /* Bolha do usuário (legível em ambos os temas) */
+  --color-bubble-user-bg:   #1B5E3F;
+  --color-bubble-user-text: #FFFFFF;
+
   --font-family-playfair: 'Playfair Display', Georgia, serif;
   --font-family-inter:    'Inter', system-ui, sans-serif;
 
@@ -27,6 +31,25 @@
   --shadow-card:  0 1px 2px rgba(28,38,34,0.04), 0 4px 16px rgba(28,38,34,0.06);
   --shadow-hover: 0 2px 4px rgba(28,38,34,0.06), 0 12px 28px rgba(28,38,34,0.10);
   --shadow-float: 0 -1px 0 var(--color-line), 0 -8px 24px rgba(28,38,34,0.05);
+}
+
+/* ============ TEMA ESCURO ============ */
+html.dark {
+  --color-paper:         #0E1311;
+  --color-surface:       #18201C;
+  --color-surface-2:     #212B26;
+  --color-ink:           #ECEAE3;
+  --color-ink-soft:      #97A19A;
+  --color-line:          #2C3833;
+  --color-floresta:      #3DA876;
+  --color-floresta-dark: #348F64;
+  --color-guarana:       #F0822E;
+  --color-rio:           #45B0CE;
+  --color-bubble-user-bg:   #2C6E4E;
+  --color-bubble-user-text: #FFFFFF;
+  --shadow-card:  0 1px 2px rgba(0,0,0,0.30), 0 4px 16px rgba(0,0,0,0.35);
+  --shadow-hover: 0 2px 4px rgba(0,0,0,0.35), 0 12px 28px rgba(0,0,0,0.45);
+  --shadow-float: 0 -1px 0 var(--color-line), 0 -8px 24px rgba(0,0,0,0.30);
 }
 
 *, *::before, *::after {
@@ -41,20 +64,34 @@ html {
 
 body {
   font-family: var(--font-family-inter);
-  background-color: #FAF8F3;
-  color: #1C2622;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
   min-height: 100dvh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1, h2, h3 {
   font-family: var(--font-family-playfair);
 }
 
+/* Scrollbar discreta */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+}
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 9999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-track { background: transparent; }
+
 /* ---------- Componentes utilitários ---------- */
 
-/* Card branco premium */
 .card {
   background: var(--color-surface);
   border: 1px solid var(--color-line);
@@ -65,15 +102,14 @@ h1, h2, h3 {
 .card:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-hover);
-  border-color: rgba(27,94,63,0.3);
+  border-color: color-mix(in srgb, var(--color-floresta) 35%, transparent);
 }
 .card:focus-visible {
   outline: none;
   border-color: var(--color-floresta);
-  box-shadow: 0 0 0 3px rgba(27,94,63,0.18), var(--shadow-card);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-floresta) 22%, transparent), var(--shadow-card);
 }
 
-/* Chip de sugestão */
 .chip {
   background: var(--color-surface);
   border: 1px solid var(--color-line);
@@ -86,42 +122,34 @@ h1, h2, h3 {
   transition: all 0.2s ease;
 }
 .chip:hover {
-  border-color: rgba(27,94,63,0.45);
+  border-color: color-mix(in srgb, var(--color-floresta) 45%, transparent);
   color: var(--color-floresta);
   background: var(--color-surface-2);
 }
 .chip:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(27,94,63,0.18);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-floresta) 22%, transparent);
 }
 
-/* Botão primário */
 .btn-primary {
   background: var(--color-floresta);
   color: #FFFFFF;
   border-radius: 0.75rem;
   font-weight: 600;
   transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
-  box-shadow: 0 2px 8px rgba(27,94,63,0.25);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--color-floresta) 28%, transparent);
 }
 .btn-primary:hover:not(:disabled) {
   background: var(--color-floresta-dark);
-  box-shadow: 0 4px 14px rgba(27,94,63,0.32);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--color-floresta) 35%, transparent);
 }
-.btn-primary:active:not(:disabled) {
-  transform: translateY(1px);
-}
+.btn-primary:active:not(:disabled) { transform: translateY(1px); }
 .btn-primary:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(27,94,63,0.3);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-floresta) 32%, transparent);
 }
-.btn-primary:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  box-shadow: none;
-}
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
 
-/* Input do composer */
 .composer-input {
   background: var(--color-surface);
   border: 1px solid var(--color-line);
@@ -129,20 +157,34 @@ h1, h2, h3 {
   color: var(--color-ink);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-.composer-input::placeholder {
-  color: var(--color-ink-soft);
-  opacity: 0.7;
-}
+.composer-input::placeholder { color: var(--color-ink-soft); opacity: 0.7; }
 .composer-input:focus {
   outline: none;
   border-color: var(--color-floresta);
-  box-shadow: 0 0 0 3px rgba(27,94,63,0.12);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-floresta) 14%, transparent);
 }
-.composer-input:disabled {
-  opacity: 0.5;
+.composer-input:disabled { opacity: 0.5; }
+
+/* Barra de erro (funciona claro/escuro) */
+.error-bar {
+  background: color-mix(in srgb, #DC2626 12%, transparent);
+  border-top: 1px solid color-mix(in srgb, #DC2626 40%, transparent);
+  color: #DC2626;
+}
+html.dark .error-bar { color: #F87171; }
+
+/* sr-only */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
 }
 
-/* ---------- Prose (markdown) tema claro ---------- */
+/* ---------- Prose (markdown) ---------- */
 .prose {
   --tw-prose-body:          #2C352F;
   --tw-prose-headings:      #1C2622;
@@ -161,37 +203,50 @@ h1, h2, h3 {
   --tw-prose-th-borders:    #E7E2D8;
   --tw-prose-td-borders:    #E7E2D8;
 }
+html.dark .prose {
+  --tw-prose-body:          #D6D9D2;
+  --tw-prose-headings:      #ECEAE3;
+  --tw-prose-lead:          #97A19A;
+  --tw-prose-links:         #45B0CE;
+  --tw-prose-bold:          #F0822E;
+  --tw-prose-counters:      #3DA876;
+  --tw-prose-bullets:       #3DA876;
+  --tw-prose-hr:            #2C3833;
+  --tw-prose-quotes:        #ECEAE3;
+  --tw-prose-quote-borders: #F0822E;
+  --tw-prose-captions:      #97A19A;
+  --tw-prose-code:          #6FD3A3;
+  --tw-prose-pre-code:      #ECEAE3;
+  --tw-prose-pre-bg:        #0B0F0D;
+  --tw-prose-th-borders:    #2C3833;
+  --tw-prose-td-borders:    #2C3833;
+}
 
 /* ---------- Transição de rota ---------- */
 .fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition: all 0.3s ease;
-}
-.fade-slide-enter-from {
-  opacity: 0;
-  transform: translateY(12px);
-}
-.fade-slide-leave-to {
-  opacity: 0;
-  transform: translateY(-8px);
-}
+.fade-slide-leave-active { transition: all 0.3s ease; }
+.fade-slide-enter-from { opacity: 0; transform: translateY(12px); }
+.fade-slide-leave-to   { opacity: 0; transform: translateY(-8px); }
 
 /* ---------- Animações ---------- */
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0; }
-}
-
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
 @keyframes fadeSlideUp {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0);    }
 }
 
-/* Wordmark com gradiente floresta → guaraná */
+/* Wordmark com gradiente */
 .text-gradient {
   background: linear-gradient(120deg, #1B5E3F 0%, #2D7A52 45%, #D9641A 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: #1B5E3F;
+}
+html.dark .text-gradient {
+  background: linear-gradient(120deg, #4FC08D 0%, #58B98C 45%, #F0822E 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #4FC08D;
 }

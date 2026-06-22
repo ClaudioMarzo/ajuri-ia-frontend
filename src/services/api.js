@@ -46,19 +46,24 @@ export async function streamChat(profileId, message, { onChunk, onDone, onError 
       buffer = lines.pop() ?? ''
 
       for (const line of lines) {
-        if (!line.startsWith('data: ')) continue
-        const payload = line.slice(6).trim()
-        if (!payload) continue
+        if (!line.startsWith('data:')) continue
 
-        if (payload.startsWith('[DONE]')) {
+        // Remove o prefixo "data:" e UM espaço delimitador opcional (regra SSE),
+        // preservando os espaços do conteúdo — senão palavras coladas ("aulaincrível").
+        let payload = line.slice(5)
+        if (payload.startsWith(' ')) payload = payload.slice(1)
+        payload = payload.replace(/\r$/, '')
+
+        const control = payload.trim()
+        if (control.startsWith('[DONE]')) {
           doneReceived = true
           try {
-            const meta = JSON.parse(payload.slice(7))
+            const meta = JSON.parse(control.slice(7))
             onDone(meta.data ?? null)
           } catch {
             onDone(null)
           }
-        } else {
+        } else if (payload.length) {
           // Deescapar \n que o backend escapa para manter o formato SSE
           onChunk(payload.replace(/\\n/g, '\n'))
         }

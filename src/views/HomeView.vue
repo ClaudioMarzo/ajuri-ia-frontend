@@ -1,8 +1,13 @@
 <template>
   <div class="min-h-screen flex flex-col items-center px-4">
 
+    <!-- Top bar -->
+    <div class="w-full max-w-5xl flex items-center justify-end pt-4">
+      <ThemeToggle />
+    </div>
+
     <!-- Hero -->
-    <header class="w-full max-w-5xl text-center pt-16 pb-10 sm:pt-24 sm:pb-14">
+    <header class="w-full max-w-5xl text-center pt-10 pb-10 sm:pt-16 sm:pb-14">
       <h1
         class="text-gradient mb-4 tracking-tight leading-none"
         style="font-family:'Playfair Display',serif; font-size:clamp(3rem,9vw,5.5rem);"
@@ -61,6 +66,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import ProfileCard from '../components/ProfileCard.vue'
+import ThemeToggle from '../components/ThemeToggle.vue'
 import { fetchProfiles } from '../services/api.js'
 
 const router   = useRouter()
