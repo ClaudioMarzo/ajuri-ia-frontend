@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @theme {
   --color-verde-mata:  #1A3C2D;
@@ -22,7 +23,9 @@
 body {
   font-family: var(--font-family-inter);
   background-color: #070F09;
-  background-image: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(26,60,45,0.65) 0%, transparent 70%);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(26,60,45,0.65) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 80% 80%, rgba(45,106,79,0.15) 0%, transparent 60%);
   color: #F4E9D8;
   min-height: 100dvh;
 }
@@ -41,13 +44,33 @@ h1, h2, h3 {
   font-family: var(--font-family-playfair);
 }
 
-/* Glassmorphism card utilitário */
+/* Glassmorphism card */
 .glass-card {
-  background: rgba(45, 106, 79, 0.12);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(224, 123, 57, 0.25);
+  background: rgba(45, 106, 79, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(224, 123, 57, 0.2);
   border-radius: 1rem;
+}
+
+/* Prose theme — cores amazônicas */
+.prose {
+  --tw-prose-body:       rgba(244, 233, 216, 0.88);
+  --tw-prose-headings:   #F4E9D8;
+  --tw-prose-lead:       rgba(244, 233, 216, 0.7);
+  --tw-prose-links:      #48CAE4;
+  --tw-prose-bold:       #E07B39;
+  --tw-prose-counters:   rgba(224, 123, 57, 0.8);
+  --tw-prose-bullets:    rgba(224, 123, 57, 0.7);
+  --tw-prose-hr:         rgba(224, 123, 57, 0.2);
+  --tw-prose-quotes:     #F4E9D8;
+  --tw-prose-quote-borders: rgba(224, 123, 57, 0.4);
+  --tw-prose-captions:   rgba(244, 233, 216, 0.5);
+  --tw-prose-code:       #48CAE4;
+  --tw-prose-pre-code:   #F4E9D8;
+  --tw-prose-pre-bg:     rgba(7, 15, 9, 0.8);
+  --tw-prose-th-borders: rgba(45, 106, 79, 0.5);
+  --tw-prose-td-borders: rgba(45, 106, 79, 0.3);
 }
 
 /* Transição de rota */
@@ -74,4 +97,12 @@ h1, h2, h3 {
 @keyframes fadeSlideUp {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* Gradiente de texto */
+.text-gradient {
+  background: linear-gradient(135deg, #E07B39 0%, #F4E9D8 60%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
