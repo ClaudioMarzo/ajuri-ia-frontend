@@ -7,12 +7,13 @@
   --color-rio-azul:    #48CAE4;
   --color-areia:       #F4E9D8;
   --color-neblina:     #F8F4EF;
+  --color-dark-bg:     #070F09;
 
   --font-family-playfair: 'Playfair Display', Georgia, serif;
   --font-family-inter:    'Inter', system-ui, sans-serif;
 }
 
-* {
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -20,13 +21,33 @@
 
 body {
   font-family: var(--font-family-inter);
-  background-color: #1A3C2D;
+  background-color: #070F09;
+  background-image: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(26,60,45,0.65) 0%, transparent 70%);
   color: #F4E9D8;
-  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
 }
 
 h1, h2, h3 {
   font-family: var(--font-family-playfair);
+}
+
+/* Glassmorphism card utilitário */
+.glass-card {
+  background: rgba(45, 106, 79, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(224, 123, 57, 0.25);
+  border-radius: 1rem;
 }
 
 /* Transição de rota */
@@ -51,12 +72,6 @@ h1, h2, h3 {
 
 /* Animação de entrada dos cards */
 @keyframes fadeSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0);    }
 }
