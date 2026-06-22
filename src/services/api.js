@@ -59,9 +59,13 @@ export async function streamChat(profileId, message, { onChunk, onDone, onError 
             onDone(null)
           }
         } else {
-          onChunk(payload)
+          // Deescapar \n que o backend escapa para manter o formato SSE
+          onChunk(payload.replace(/\\n/g, '\n'))
         }
       }
+
+      // Cede o event loop para o Vue renderizar cada lote de chunks
+      await new Promise(r => setTimeout(r, 0))
     }
 
     if (!doneReceived) onDone(null)
