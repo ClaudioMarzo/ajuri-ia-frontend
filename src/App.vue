@@ -1,3 +1,7 @@
 <template>
-  <div>AjuriIA</div>
+  <RouterView v-slot="{ Component }">
+    <Transition name="fade-slide" mode="out-in">
+      <component :is="Component" :key="$route.path" />
+    </Transition>
+  </RouterView>
 </template>
