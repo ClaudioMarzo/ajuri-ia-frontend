@@ -4,7 +4,7 @@
     <span
       v-if="isStreaming"
       class="inline-block w-[2px] h-4 ml-0.5 align-middle"
-      style="background:var(--color-guarana); animation:blink 1s infinite;"
+      style="background:var(--color-coral); animation:blink 1s infinite;"
     />
   </div>
 </template>
@@ -35,8 +35,8 @@ const renderedHtml = computed(() =>
 }
 
 .streaming-text :deep(code) {
-  background: rgba(33, 136, 166, 0.10);
-  color: var(--color-rio);
+  background: color-mix(in srgb, var(--color-coral) 12%, transparent);
+  color: var(--color-coral);
   padding: 0.15em 0.4em;
   border-radius: 4px;
   font-size: 0.85em;
@@ -44,8 +44,9 @@ const renderedHtml = computed(() =>
 }
 
 .streaming-text :deep(pre) {
-  background: var(--color-ink);
-  border-radius: 0.6rem;
+  background: var(--tw-prose-pre-bg, #211D19);
+  border: 1px solid var(--color-line);
+  border-radius: 0.7rem;
   padding: 1rem;
   overflow-x: auto;
 }
@@ -53,12 +54,12 @@ const renderedHtml = computed(() =>
 .streaming-text :deep(pre code) {
   background: transparent;
   padding: 0;
-  color: #F2EFE7;
+  color: var(--tw-prose-pre-code, #ECEAE3);
 }
 
 .streaming-text :deep(blockquote) {
-  border-left: 3px solid var(--color-guarana);
-  background: rgba(217, 100, 26, 0.05);
+  border-left: 3px solid var(--color-coral);
+  background: color-mix(in srgb, var(--color-coral) 6%, transparent);
   border-radius: 0 0.5rem 0.5rem 0;
   padding: 0.5rem 1rem;
   font-style: normal;

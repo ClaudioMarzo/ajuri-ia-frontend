@@ -43,12 +43,12 @@ onMounted(initTheme)
   transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
 }
 .theme-toggle:hover {
-  color: var(--color-guarana);
-  border-color: rgba(217, 100, 26, 0.45);
+  color: var(--color-coral);
+  border-color: color-mix(in srgb, var(--color-coral) 45%, transparent);
   background: var(--color-surface-2);
 }
 .theme-toggle:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(27, 94, 63, 0.2);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-coral) 22%, transparent);
 }
 </style>

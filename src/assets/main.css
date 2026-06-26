@@ -2,27 +2,33 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  /* Superfícies */
-  --color-paper:         #FAF8F3;
-  --color-surface:       #FFFFFF;
-  --color-surface-2:     #F2EFE7;
+  /* Superfícies — cremes quentes em camadas (ref. claude.ai light).
+     Cards/superfícies são creme (mais escuros que o canvas) → realce sem branco estourado. */
+  --color-paper:         #F3E9DA; /* caramelo claro (canvas) */
+  --color-surface:       #EADCC8; /* cards/composer/sidebar */
+  --color-surface-2:     #E2CFB5; /* hover / camada mais funda */
 
   /* Texto */
-  --color-ink:           #1C2622;
-  --color-ink-soft:      #5C665F;
+  --color-ink:           #2C251D;
+  --color-ink-soft:      #756657;
 
   /* Estrutura */
-  --color-line:          #E7E2D8;
+  --color-line:          #D7C2A6;
 
-  /* Marca / acentos amazônicos */
+  /* Acentos: coral (1) + floresta (2) */
+  --color-coral:         #CF8357;
+  --color-coral-dark:    #B66C44;
   --color-floresta:      #1B5E3F;
   --color-floresta-dark: #14492F;
-  --color-guarana:       #D9641A;
+  --color-guarana:       #CF8357; /* alias do coral (compat. refs existentes) */
   --color-rio:           #2188A6;
 
-  /* Bolha do usuário (legível em ambos os temas) */
-  --color-bubble-user-bg:   #1B5E3F;
-  --color-bubble-user-text: #FFFFFF;
+  /* Folha do fundo botânico */
+  --color-leaf:          #1B5E3F;
+
+  /* Bolha do usuário — soft + borda (estilo claude) */
+  --color-bubble-user-bg:   #E6D5BE;
+  --color-bubble-user-text: #2C251D;
 
   --font-family-playfair: 'Playfair Display', Georgia, serif;
   --font-family-inter:    'Inter', system-ui, sans-serif;
@@ -30,28 +36,31 @@
   /* Coluna de leitura do chat */
   --reading: 46rem;
 
-  /* Sombras suaves (sem glass) */
-  --shadow-card:  0 1px 2px rgba(28,38,34,0.04), 0 4px 16px rgba(28,38,34,0.06);
-  --shadow-hover: 0 2px 4px rgba(28,38,34,0.06), 0 12px 28px rgba(28,38,34,0.10);
-  --shadow-float: 0 -1px 0 var(--color-line), 0 -8px 24px rgba(28,38,34,0.05);
+  /* Sombras suaves e quentes */
+  --shadow-card:  0 1px 2px rgba(40,28,18,0.05), 0 10px 30px rgba(40,28,18,0.10);
+  --shadow-hover: 0 2px 4px rgba(40,28,18,0.08), 0 16px 40px rgba(40,28,18,0.14);
+  --shadow-float: 0 -1px 0 var(--color-line), 0 -8px 24px rgba(40,28,18,0.08);
 }
 
-/* ============ TEMA ESCURO ============ */
+/* ============ TEMA ESCURO — warm dark ============ */
 html.dark {
-  --color-paper:         #0E1311;
-  --color-surface:       #18201C;
-  --color-surface-2:     #212B26;
+  --color-paper:         #1A1714;
+  --color-surface:       #211D19;
+  --color-surface-2:     #2A2621;
   --color-ink:           #ECEAE3;
-  --color-ink-soft:      #97A19A;
-  --color-line:          #2C3833;
+  --color-ink-soft:      #928D83;
+  --color-line:          #2E2A24;
+  --color-coral:         #E0805A;
+  --color-coral-dark:    #C76A45;
   --color-floresta:      #3DA876;
   --color-floresta-dark: #348F64;
-  --color-guarana:       #F0822E;
+  --color-guarana:       #E0805A;
   --color-rio:           #45B0CE;
-  --color-bubble-user-bg:   #2C6E4E;
-  --color-bubble-user-text: #FFFFFF;
-  --shadow-card:  0 1px 2px rgba(0,0,0,0.30), 0 4px 16px rgba(0,0,0,0.35);
-  --shadow-hover: 0 2px 4px rgba(0,0,0,0.35), 0 12px 28px rgba(0,0,0,0.45);
+  --color-leaf:          #3DA876;
+  --color-bubble-user-bg:   #2A2621;
+  --color-bubble-user-text: #ECEAE3;
+  --shadow-card:  0 1px 2px rgba(0,0,0,0.30), 0 10px 34px rgba(0,0,0,0.40);
+  --shadow-hover: 0 2px 4px rgba(0,0,0,0.35), 0 14px 40px rgba(0,0,0,0.48);
   --shadow-float: 0 -1px 0 var(--color-line), 0 -8px 24px rgba(0,0,0,0.30);
 }
 
@@ -79,8 +88,41 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* App é o contexto de empilhamento: o fundo botânico (z-index:-1)
+   fica atrás de todo o conteúdo, mas acima do fundo do body. */
+#app {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  min-height: 100dvh;
+}
+
 h1, h2, h3 {
   font-family: var(--font-family-playfair);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Monograma do perfil (substitui os emojis) */
+.monogram {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-family: var(--font-family-playfair);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  flex-shrink: 0;
+  user-select: none;
+}
+.monogram--floresta {
+  background: color-mix(in srgb, var(--color-floresta) 13%, transparent);
+  color: var(--color-floresta);
+}
+.monogram--coral {
+  background: color-mix(in srgb, var(--color-coral) 14%, transparent);
+  color: var(--color-coral);
 }
 
 /* Scrollbar discreta */
@@ -102,19 +144,19 @@ h1, h2, h3 {
 .card {
   background: var(--color-surface);
   border: 1px solid var(--color-line);
-  border-radius: 1rem;
+  border-radius: 0.875rem;
   box-shadow: var(--shadow-card);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 .card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
-  border-color: color-mix(in srgb, var(--color-floresta) 35%, transparent);
+  border-color: color-mix(in srgb, var(--color-coral) 45%, transparent);
 }
 .card:focus-visible {
   outline: none;
-  border-color: var(--color-floresta);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-floresta) 22%, transparent), var(--shadow-card);
+  border-color: var(--color-coral);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-coral) 22%, transparent), var(--shadow-card);
 }
 
 .chip {
@@ -129,48 +171,135 @@ h1, h2, h3 {
   transition: all 0.2s ease;
 }
 .chip:hover {
-  border-color: color-mix(in srgb, var(--color-floresta) 45%, transparent);
-  color: var(--color-floresta);
+  border-color: color-mix(in srgb, var(--color-coral) 50%, transparent);
+  color: var(--color-coral);
   background: var(--color-surface-2);
 }
 .chip:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-floresta) 22%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-coral) 22%, transparent);
 }
 
 .btn-primary {
-  background: var(--color-floresta);
+  background: var(--color-coral);
   color: #FFFFFF;
   border-radius: 0.75rem;
   font-weight: 600;
   transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--color-floresta) 28%, transparent);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--color-coral) 26%, transparent);
 }
 .btn-primary:hover:not(:disabled) {
-  background: var(--color-floresta-dark);
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--color-floresta) 35%, transparent);
+  background: var(--color-coral-dark);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--color-coral) 34%, transparent);
 }
 .btn-primary:active:not(:disabled) { transform: translateY(1px); }
 .btn-primary:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-floresta) 32%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-coral) 32%, transparent);
 }
 .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
 
 .composer-input {
   background: var(--color-surface);
   border: 1px solid var(--color-line);
-  border-radius: 0.75rem;
+  border-radius: 1rem;
   color: var(--color-ink);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-.composer-input::placeholder { color: var(--color-ink-soft); opacity: 0.7; }
+.composer-input::placeholder { color: var(--color-ink-soft); opacity: 0.8; }
 .composer-input:focus {
   outline: none;
-  border-color: var(--color-floresta);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-floresta) 14%, transparent);
+  border-color: var(--color-coral);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-coral) 14%, transparent);
 }
 .composer-input:disabled { opacity: 0.5; }
+
+/* ---------- Composer em cartão (Home + Chat) ---------- */
+.composer-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-card);
+  padding: 1rem 1rem 0.75rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.composer-card:focus-within {
+  border-color: color-mix(in srgb, var(--color-coral) 45%, transparent);
+  box-shadow: var(--shadow-hover);
+}
+.composer-card__input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  resize: none;
+  outline: none;
+  color: var(--color-ink);
+  font-family: var(--font-family-inter);
+  font-size: 1rem;
+  line-height: 1.5;
+  max-height: 200px;
+  /* Recuo igual ao conteúdo do pill (borda 1px + padding 0.75rem),
+     para o texto e o chip "Perfil:" começarem na mesma linha vertical. */
+  padding-inline: calc(0.75rem + 1px);
+}
+.composer-card__input::placeholder { color: var(--color-ink-soft); opacity: 0.85; }
+.composer-card__input:disabled { opacity: 0.6; }
+.composer-card__row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+.composer-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--color-line);
+  border-radius: 9999px;
+  padding: 0.4rem 0.75rem;
+  color: var(--color-ink-soft);
+  font-size: 0.85rem;
+  font-weight: 500;
+  max-width: 75%;
+  min-width: 0;
+  white-space: nowrap;
+}
+.composer-pill__dot {
+  width: 8px; height: 8px;
+  border-radius: 9999px;
+  background: var(--color-floresta);
+  flex-shrink: 0;
+}
+.composer-pill__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.composer-send {
+  width: 40px; height: 40px;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  border: none;
+  background: var(--color-coral);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+.composer-send:hover:not(:disabled) { background: var(--color-coral-dark); }
+.composer-send:active:not(:disabled) { transform: translateY(1px); }
+.composer-send:disabled { opacity: 0.4; cursor: not-allowed; }
+.composer-send .spin {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.5);
+  border-top-color: #fff;
+  border-radius: 9999px;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* Barra de erro (funciona claro/escuro) */
 .error-bar {
@@ -193,38 +322,38 @@ html.dark .error-bar { color: #F87171; }
 
 /* ---------- Prose (markdown) ---------- */
 .prose {
-  --tw-prose-body:          #2C352F;
+  --tw-prose-body:          #3D403A;
   --tw-prose-headings:      #1C2622;
-  --tw-prose-lead:          #5C665F;
-  --tw-prose-links:         #2188A6;
-  --tw-prose-bold:          #C2560F;
+  --tw-prose-lead:          #6A7064;
+  --tw-prose-links:         #C2552E;
+  --tw-prose-bold:          #1C2622;
   --tw-prose-counters:      #1B5E3F;
   --tw-prose-bullets:       #1B5E3F;
   --tw-prose-hr:            #E7E2D8;
   --tw-prose-quotes:        #1C2622;
-  --tw-prose-quote-borders: #D9641A;
-  --tw-prose-captions:      #5C665F;
-  --tw-prose-code:          #1B5E3F;
-  --tw-prose-pre-code:      #F2EFE7;
-  --tw-prose-pre-bg:        #1C2622;
+  --tw-prose-quote-borders: #C2552E;
+  --tw-prose-captions:      #6A7064;
+  --tw-prose-code:          #C2552E;
+  --tw-prose-pre-code:      #ECEAE3;
+  --tw-prose-pre-bg:        #211D19;
   --tw-prose-th-borders:    #E7E2D8;
   --tw-prose-td-borders:    #E7E2D8;
 }
 html.dark .prose {
-  --tw-prose-body:          #D6D9D2;
+  --tw-prose-body:          #C3C0B7;
   --tw-prose-headings:      #ECEAE3;
-  --tw-prose-lead:          #97A19A;
-  --tw-prose-links:         #45B0CE;
-  --tw-prose-bold:          #F0822E;
+  --tw-prose-lead:          #928D83;
+  --tw-prose-links:         #E0805A;
+  --tw-prose-bold:          #ECEAE3;
   --tw-prose-counters:      #3DA876;
   --tw-prose-bullets:       #3DA876;
-  --tw-prose-hr:            #2C3833;
+  --tw-prose-hr:            #2E2A24;
   --tw-prose-quotes:        #ECEAE3;
-  --tw-prose-quote-borders: #F0822E;
-  --tw-prose-captions:      #97A19A;
-  --tw-prose-code:          #6FD3A3;
+  --tw-prose-quote-borders: #E0805A;
+  --tw-prose-captions:      #928D83;
+  --tw-prose-code:          #E0805A;
   --tw-prose-pre-code:      #ECEAE3;
-  --tw-prose-pre-bg:        #0B0F0D;
+  --tw-prose-pre-bg:        #141210;
   --tw-prose-th-borders:    #2C3833;
   --tw-prose-td-borders:    #2C3833;
 }
@@ -242,16 +371,17 @@ html.dark .prose {
   to   { opacity: 1; transform: translateY(0);    }
 }
 
-/* Wordmark com gradiente */
+/* Wordmark com gradiente floresta → coral */
 .text-gradient {
-  background: linear-gradient(120deg, #1B5E3F 0%, #2D7A52 45%, #D9641A 100%);
+  background: linear-gradient(118deg, #185437 0%, #2B7A53 42%, #CF8357 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  color: #1B5E3F;
+  color: #185437;
+  text-shadow: 0 0 0.01px rgba(24,84,55,0.4);
 }
 html.dark .text-gradient {
-  background: linear-gradient(120deg, #4FC08D 0%, #58B98C 45%, #F0822E 100%);
+  background: linear-gradient(120deg, #4FC08D 0%, #58B98C 40%, #E0805A 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;

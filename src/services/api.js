@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL
+const API_URL = import.meta.env.VITE_API_URL ?? ''
 
 export async function fetchProfiles() {
   const res = await fetch(`${API_URL}/api/profiles`)
@@ -8,15 +8,40 @@ export async function fetchProfiles() {
   return data.data
 }
 
-export async function streamChat(profileId, message, { onChunk, onDone, onError }) {
+export async function fetchModels() {
+  const res = await fetch(`${API_URL}/api/models`)
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  const data = await res.json()
+  if (!data.success) throw new Error(data.messageError ?? 'Erro ao carregar modelos')
+  return data.data // { default: string, models: [{ id, label }] }
+}
+
+export async function fetchHealth() {
+  try {
+    const res = await fetch(`${API_URL}/api/health`, { signal: AbortSignal.timeout(4000) })
+    if (!res.ok) return false
+
+    const data = await res.json().catch(() => null)
+    if (data && typeof data.success === 'boolean') return data.success
+    return true
+  } catch {
+    return false
+  }
+}
+
+// model: id do modelo escolhido (opcional — undefined usa o default do servidor)
+// signal: AbortSignal para cancelamento via AbortController
+export async function streamChat(profileId, message, model, { onChunk, onDone, onError, signal }) {
   let res
   try {
     res = await fetch(`${API_URL}/api/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ profileId, message })
+      body: JSON.stringify({ profileId, message, ...(model ? { model } : {}) }),
+      signal,
     })
-  } catch {
+  } catch (err) {
+    if (err.name === 'AbortError') return
     onError('Erro de conexão. Verifique sua internet.')
     return
   }
@@ -48,8 +73,6 @@ export async function streamChat(profileId, message, { onChunk, onDone, onError 
       for (const line of lines) {
         if (!line.startsWith('data:')) continue
 
-        // Remove o prefixo "data:" e UM espaço delimitador opcional (regra SSE),
-        // preservando os espaços do conteúdo — senão palavras coladas ("aulaincrível").
         let payload = line.slice(5)
         if (payload.startsWith(' ')) payload = payload.slice(1)
         payload = payload.replace(/\r$/, '')
@@ -64,12 +87,10 @@ export async function streamChat(profileId, message, { onChunk, onDone, onError 
             onDone(null)
           }
         } else if (payload.length) {
-          // Deescapar \n que o backend escapa para manter o formato SSE
           onChunk(payload.replace(/\\n/g, '\n'))
         }
       }
 
-      // Cede o event loop para o Vue renderizar cada lote de chunks
       await new Promise(r => setTimeout(r, 0))
     }
 
