@@ -7,12 +7,42 @@
     </div>
 
     <!-- Hero -->
-    <h1 class="wordmark" style="font-family:'Playfair Display',serif;">
+    <h1
+      class="wordmark wordmark--interactive"
+      style="font-family:'Playfair Display',serif;"
+      role="button"
+      tabindex="0"
+      aria-label="Ver significado do nome AjuriIA"
+      @click="toggleAboutName"
+      @keydown.enter.prevent="toggleAboutName"
+      @keydown.space.prevent="toggleAboutName"
+    >
       Ajuri<span style="color:var(--color-coral);">IA</span>
     </h1>
     <p class="subtitle">
       Inteligência artificial para a realidade amazônica. Pergunte ou escolha um perfil.
     </p>
+    <button type="button" class="about-toggle" @click="toggleAboutName">
+      O que significa o nome AjuriIA?
+    </button>
+
+    <Transition name="about-fade">
+      <section v-if="aboutNameOpen" class="about-card" role="region" aria-label="Significado do nome AjuriIA">
+        <p>
+          Ajuri vem do contexto amazônico de ajuda mútua e trabalho comunitário em mutirão.
+          O nome AjuriIA representa tecnologia feita para cooperar com as pessoas da região,
+          valorizando cultura local, linguagem simples e utilidade prática no dia a dia.
+        </p>
+        <div class="about-card__actions">
+          <button type="button" class="about-card__btn" @click="askAboutNameInChat">
+            Perguntar isso no chat
+          </button>
+          <button type="button" class="about-card__link" @click="aboutNameOpen = false">
+            Fechar
+          </button>
+        </div>
+      </section>
+    </Transition>
 
     <!-- Loading -->
     <div
@@ -109,6 +139,9 @@ const homeText  = ref('')
 const homeInput = ref(null)
 const selectedProfileId = ref('')
 const dropOpen  = ref(false)
+const aboutNameOpen = ref(false)
+
+const ABOUT_NAME_QUESTION = 'Por que o nome AjuriIA? Explique o significado cultural e a proposta do projeto.'
 
 const selectedName = computed(() =>
   profiles.value.find(p => p.id === selectedProfileId.value)?.nome ?? 'Selecione'
@@ -146,6 +179,16 @@ function askFromHome() {
   if (!text || !selectedProfileId.value) return
   router.push({ path: `/chat/${selectedProfileId.value}`, query: { q: text } })
 }
+
+function toggleAboutName() {
+  aboutNameOpen.value = !aboutNameOpen.value
+}
+
+function askAboutNameInChat() {
+  const profileId = selectedProfileId.value || profiles.value[0]?.id
+  if (!profileId) return
+  router.push({ path: `/chat/${profileId}`, query: { q: ABOUT_NAME_QUESTION } })
+}
 </script>
 
 <style scoped>
@@ -171,12 +214,87 @@ function askFromHome() {
   color: var(--color-ink);
   font-size: clamp(2.75rem, 7vw, 3.75rem); /* 60px no desktop */
 }
+.wordmark--interactive {
+  cursor: pointer;
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+.wordmark--interactive:hover {
+  transform: translateY(-1px);
+}
+.wordmark--interactive:focus-visible {
+  outline: none;
+  text-shadow: 0 0 0.75rem color-mix(in srgb, var(--color-coral) 25%, transparent);
+}
 .subtitle {
   margin-top: 18px;
   max-width: 30ch;
   font-size: 1.0625rem; /* 17px */
   line-height: 1.5;
   color: var(--color-ink-soft);
+}
+
+.about-toggle {
+  margin-top: 0.7rem;
+  border: none;
+  background: none;
+  color: var(--color-coral);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.about-card {
+  width: min(760px, 100%);
+  margin-top: 0.95rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--color-line);
+  border-radius: 0.95rem;
+  background: color-mix(in srgb, var(--color-surface-2) 64%, transparent);
+  text-align: left;
+  color: var(--color-ink-soft);
+  line-height: 1.6;
+  box-shadow: var(--shadow-card);
+}
+
+.about-card__actions {
+  margin-top: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.about-card__btn {
+  border: 1px solid var(--color-line);
+  border-radius: 9999px;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  padding: 0.42rem 0.86rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.about-card__btn:hover {
+  border-color: color-mix(in srgb, var(--color-coral) 42%, transparent);
+}
+
+.about-card__link {
+  border: none;
+  background: none;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+
+.about-fade-enter-active,
+.about-fade-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.about-fade-enter-from,
+.about-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
 }
 
 .home-composer { margin-top: 34px; width: 100%; max-width: 660px; }
