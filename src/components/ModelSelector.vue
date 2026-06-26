@@ -113,4 +113,17 @@ function select(id) {
 }
 .model-sel__item:hover { background: var(--color-surface-2); }
 .model-sel__item.active { color: var(--color-coral); font-weight: 600; }
+
+@media (max-width: 767px) {
+  .model-sel__menu {
+    position: fixed;
+    left: 0.85rem;
+    right: 0.85rem;
+    bottom: calc(max(4.6rem, env(safe-area-inset-bottom) + 4rem));
+    min-width: 0;
+    max-height: min(46vh, 340px);
+    overflow-y: auto;
+    border-radius: 1rem;
+  }
+}
 </style>
