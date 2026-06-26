@@ -1,28 +1,72 @@
 const API_URL = import.meta.env.VITE_API_URL ?? ''
 
+function normalizeChatError(status, messageError) {
+  const msg = String(messageError ?? '').toLowerCase()
+
+  if (
+    status === 429 ||
+    /quota|rate\s*limit|too\s*many\s*requests|exceeded/.test(msg)
+  ) {
+    return 'O serviço de IA atingiu o limite de uso no momento. Tente novamente em alguns minutos.'
+  }
+
+  if (
+    status === 503 ||
+    /temporariamente indispon[ií]vel|todos os llms falharam/.test(msg)
+  ) {
+    return 'O serviço de IA está temporariamente indisponível. Tente novamente em instantes.'
+  }
+
+  if (status >= 500) {
+    return 'O servidor encontrou um problema temporário. Tente novamente em instantes.'
+  }
+
+  if (status === 400) {
+    return messageError ?? 'Não foi possível processar sua mensagem. Revise o texto e tente novamente.'
+  }
+
+  return messageError ?? `Erro ${status}`
+}
+
+let bootstrapPromise = null
+let bootstrapCache = null
+
+export async function fetchBootstrap({ force = false } = {}) {
+  if (!force && bootstrapCache) return bootstrapCache
+  if (!force && bootstrapPromise) return bootstrapPromise
+
+  bootstrapPromise = (async () => {
+    const res = await fetch(`${API_URL}/api/bootstrap`)
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+
+    const data = await res.json()
+    if (!data.success) throw new Error(data.messageError ?? 'Erro ao carregar bootstrap')
+
+    bootstrapCache = data.data
+    return bootstrapCache
+  })()
+
+  try {
+    return await bootstrapPromise
+  } finally {
+    bootstrapPromise = null
+  }
+}
+
 export async function fetchProfiles() {
-  const res = await fetch(`${API_URL}/api/profiles`)
-  if (!res.ok) throw new Error(`HTTP ${res.status}`)
-  const data = await res.json()
-  if (!data.success) throw new Error(data.messageError ?? 'Erro ao carregar perfis')
-  return data.data
+  const data = await fetchBootstrap()
+  return data.profiles
 }
 
 export async function fetchModels() {
-  const res = await fetch(`${API_URL}/api/models`)
-  if (!res.ok) throw new Error(`HTTP ${res.status}`)
-  const data = await res.json()
-  if (!data.success) throw new Error(data.messageError ?? 'Erro ao carregar modelos')
-  return data.data // { default: string, models: [{ id, label }] }
+  const data = await fetchBootstrap()
+  return data.models // { default: string, models: [{ id, label }] }
 }
 
 export async function fetchHealth() {
   try {
-    const res = await fetch(`${API_URL}/api/health`, { signal: AbortSignal.timeout(4000) })
-    if (!res.ok) return false
-
-    const data = await res.json().catch(() => null)
-    if (data && typeof data.success === 'boolean') return data.success
+    const data = await fetchBootstrap()
+    if (typeof data?.health?.online === 'boolean') return data.health.online
     return true
   } catch {
     return false
@@ -49,9 +93,9 @@ export async function streamChat(profileId, message, model, { onChunk, onDone, o
   if (!res.ok) {
     try {
       const data = await res.json()
-      onError(data.messageError ?? `Erro ${res.status}`)
+      onError(normalizeChatError(res.status, data?.messageError))
     } catch {
-      onError(`Erro ${res.status}`)
+      onError(normalizeChatError(res.status, null))
     }
     return
   }

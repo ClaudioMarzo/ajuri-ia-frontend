@@ -5,6 +5,7 @@
       {{ requestedLabel }} indisponível · respondido por <strong>{{ usedLabel }}</strong>
     </span>
     <span v-else>Respondido por {{ usedLabel }}</span>
+    <span v-if="providerLabel" class="llm-badge__provider">via {{ providerLabel }}</span>
   </div>
 </template>
 
@@ -12,22 +13,23 @@
 import { computed } from 'vue'
 
 const props = defineProps({
-  llmUsed:        { default: null },
-  requestedModel: { default: null },
-  labelMap:       { type: Object, default: () => ({}) },
+  llmUsed:             { default: null },
+  llmLabel:            { default: null },
+  requestedModelLabel: { default: null },
+  fallbackUsed:        { type: Boolean, default: false },
+  provider:            { default: null },
 })
 
-const isFallback = computed(() =>
-  props.requestedModel && props.llmUsed && props.requestedModel !== props.llmUsed
-)
+const isFallback = computed(() => Boolean(props.fallbackUsed))
 
-const usedLabel      = computed(() => label(props.llmUsed))
-const requestedLabel = computed(() => label(props.requestedModel))
+const usedLabel = computed(() => props.llmLabel ?? props.llmUsed ?? '')
+const requestedLabel = computed(() => props.requestedModelLabel ?? 'Modelo solicitado')
 
-function label(id) {
-  if (!id) return ''
-  return props.labelMap[id] ?? id.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
-}
+const providerLabel = computed(() => {
+  if (!props.provider) return ''
+  if (props.provider === 'gemini') return 'Gemini'
+  return props.provider
+})
 </script>
 
 <style scoped>
@@ -48,4 +50,8 @@ function label(id) {
 .llm-badge__spark { color: var(--color-coral); font-size: 0.66rem; }
 .llm-badge__fallback { color: var(--color-ink-soft); }
 .llm-badge__fallback strong { color: var(--color-floresta); font-weight: 600; }
+.llm-badge__provider {
+  color: var(--color-ink-soft);
+  opacity: 0.86;
+}
 </style>

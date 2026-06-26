@@ -15,7 +15,16 @@ export function useChat() {
     error.value = null
     messages.value.push({ role: 'user', content: text })
 
-    const aiMsg = { role: 'ai', content: '', llmUsed: null, requestedModel: model ?? null }
+    const aiMsg = {
+      role: 'ai',
+      content: '',
+      llmUsed: null,
+      llmLabel: null,
+      requestedModel: model ?? null,
+      requestedModelLabel: null,
+      fallbackUsed: false,
+      provider: null,
+    }
     messages.value.push(aiMsg)
     isStreaming.value = true
 
@@ -28,6 +37,11 @@ export function useChat() {
       },
       onDone(meta) {
         aiMsg.llmUsed = meta?.llmUsed ?? null
+        aiMsg.llmLabel = meta?.llmLabel ?? null
+        aiMsg.requestedModel = meta?.requestedModel ?? aiMsg.requestedModel
+        aiMsg.requestedModelLabel = meta?.requestedModelLabel ?? null
+        aiMsg.fallbackUsed = Boolean(meta?.fallbackUsed)
+        aiMsg.provider = meta?.provider ?? null
         isStreaming.value = false
         abortController = null
       },

@@ -18,8 +18,10 @@
       />
       <LlmBadge
         :llm-used="message.llmUsed"
-        :requested-model="message.requestedModel"
-        :label-map="labelMap"
+        :llm-label="message.llmLabel"
+        :requested-model-label="message.requestedModelLabel"
+        :fallback-used="message.fallbackUsed"
+        :provider="message.provider"
       />
     </div>
   </div>
@@ -34,7 +36,6 @@ defineProps({
   isStreaming:     { type: Boolean, default: false },
   isLastAiMessage: { type: Boolean, default: false },
   profileInitials: { type: String,  default: 'IA' },
-  labelMap:        { type: Object,  default: () => ({}) },
 })
 </script>
 

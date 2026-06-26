@@ -84,7 +84,6 @@
             :is-streaming="isStreaming"
             :is-last-ai-message="msg.role === 'ai' && i === messages.length - 1"
             :profile-initials="initials"
-            :label-map="labelMap"
           />
         </div>
       </main>
@@ -149,7 +148,7 @@ import ChatSidebar from '../components/ChatSidebar.vue'
 import ThemeToggle from '../components/ThemeToggle.vue'
 import ModelSelector from '../components/ModelSelector.vue'
 import { useChat } from '../composables/useChat.js'
-import { fetchProfiles, fetchModels, fetchHealth } from '../services/api.js'
+import { fetchBootstrap } from '../services/api.js'
 import { monogram } from '../utils/monogram.js'
 
 const STORAGE_KEY = 'ajuri:model'
@@ -168,7 +167,6 @@ const inputEl    = ref(null)
 // Modelos
 const availableModels = ref([])
 const selectedModel   = ref(localStorage.getItem(STORAGE_KEY) ?? null)
-const labelMap        = ref({})
 const activeModel     = computed(() => {
   if (!selectedModel.value) return undefined
   return availableModels.value.some(m => m.id === selectedModel.value)
@@ -182,16 +180,11 @@ const healthChecked = ref(false)
 
 const { messages, isStreaming, error, sendMessage, stop, clearMessages } = useChat()
 
-const SUGGESTIONS_BY_ID = {
-  'professor':    ['Me ajude a criar um plano de aula', 'Como engajar alunos em sala?', 'Atividade sobre a Amazônia'],
-  'agente-saude': ['Como orientar sobre dengue?', 'Calendário de vacinação atualizado', 'Comunicado para a comunidade'],
-  'produtor':     ['Qual o preço atual do guaraná?', 'Como aumentar minha produção?', 'Onde vender minha produção?'],
-  'pescador':     ['Como identificar peixes mais vendáveis?', 'Qual época é melhor para pescar?', 'Como preservar o peixe fresco?'],
-  'servidor':     ['Como redigir um ofício?', 'Modelo de ata de reunião', 'Como elaborar um relatório oficial?'],
-  'empreendedor': ['Como montar um plano de negócio?', 'Como fazer um pitch rápido?', 'Ideias de negócio para a região'],
-}
 const DEFAULT_SUGGESTIONS = ['Como posso começar?', 'Quais são suas principais funções?', 'Me dê um exemplo prático']
-const suggestions = computed(() => SUGGESTIONS_BY_ID[profile.value?.id] ?? DEFAULT_SUGGESTIONS)
+const suggestions = computed(() => {
+  const fromApi = profile.value?.suggestedPrompts
+  return Array.isArray(fromApi) && fromApi.length ? fromApi : DEFAULT_SUGGESTIONS
+})
 
 // Persiste a escolha de modelo no localStorage
 watch(selectedModel, val => {
@@ -200,14 +193,19 @@ watch(selectedModel, val => {
 })
 
 onMounted(async () => {
-  // Carrega perfis, modelos e health em paralelo
-  const [profiles, modelsData, healthy] = await Promise.all([
-    fetchProfiles().catch(() => []),
-    fetchModels().catch(() => null),
-    fetchHealth(),
-  ])
+  const bootstrap = await fetchBootstrap().catch(() => null)
+  if (!bootstrap) {
+    apiOnline.value = false
+    healthChecked.value = true
+    router.push('/')
+    return
+  }
 
-  apiOnline.value     = healthy
+  const profiles = bootstrap.profiles ?? []
+  const modelsData = bootstrap.models ?? null
+  const healthy = bootstrap.health?.online ?? true
+
+  apiOnline.value = healthy
   healthChecked.value = true
 
   profile.value = profiles.find(p => p.id === props.profileId) ?? null
@@ -215,7 +213,6 @@ onMounted(async () => {
 
   if (modelsData) {
     availableModels.value = modelsData.models
-    for (const m of modelsData.models) labelMap.value[m.id] = m.label
     // Usa o default da API se não houver escolha salva ou a salva for inválida
     const savedValid = modelsData.models.some(m => m.id === selectedModel.value)
     if (!savedValid) selectedModel.value = modelsData.default

@@ -99,7 +99,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import ProfileCard from '../components/ProfileCard.vue'
 import ThemeToggle from '../components/ThemeToggle.vue'
-import { fetchProfiles } from '../services/api.js'
+import { fetchBootstrap } from '../services/api.js'
 
 const router    = useRouter()
 const profiles  = ref([])
@@ -121,7 +121,8 @@ function selectProfile(id) {
 
 onMounted(async () => {
   try {
-    profiles.value = await fetchProfiles()
+    const bootstrap = await fetchBootstrap()
+    profiles.value = bootstrap.profiles
     selectedProfileId.value = profiles.value[0]?.id ?? ''
   } catch (e) {
     error.value = e.message
